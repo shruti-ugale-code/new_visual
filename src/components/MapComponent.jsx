@@ -71,6 +71,21 @@ const MapUpdater = ({ ships, selectedShip }) => {
 
 const MapComponent = ({ ships, selectedShip, onShipSelect, trajectories, showTrajectories }) => {
   const mapRef = useRef();
+  
+  // Handle empty state
+  if (!ships || ships.length === 0) {
+    return (
+      <div className="map-container">
+        <div className="empty-state">
+          <h3>No Ship Data Available</h3>
+          <p>Could not load ship positions from the data source.</p>
+          <div className="retry-button" onClick={() => window.location.reload()}>
+            Retry
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const getShipTrajectoryColor = (shipType) => {
     const colors = {
@@ -99,8 +114,8 @@ const MapComponent = ({ ships, selectedShip, onShipSelect, trajectories, showTra
     <div className="map-container">
       <MapContainer
         ref={mapRef}
-        center={[51.505, -0.09]}
-        zoom={10}
+        center={[40.75, -74.00]}
+        zoom={12}
         className="leaflet-map"
         zoomControl={true}
         attributionControl={false}

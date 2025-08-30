@@ -89,6 +89,7 @@ function App() {
   const [ships, setShips] = useState([]);
   const [selectedShip, setSelectedShip] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     console.log('App component mounted');
@@ -108,6 +109,7 @@ function App() {
         }
       } catch (error) {
         console.error('Error loading ship data:', error);
+        setError(error);
         setShips([]);
       } finally {
         setLoading(false);
@@ -142,29 +144,49 @@ function App() {
         
         <div className="ship-panel">
           <h2>Ships Detected: {ships.length}</h2>
-          {ships.map(ship => (
-            <div 
-              key={ship.mmsi} 
-              className={`ship-item ${selectedShip?.mmsi === ship.mmsi ? 'selected' : ''}`}
-              onClick={() => setSelectedShip(ship)}
-            >
-              <h3>{ship.name}</h3>
-              <div className="ship-details">
-                <p><strong>MMSI:</strong> {ship.mmsi}</p>
-                <p><strong>Type:</strong> {ship.shipType}</p>
-                <p><strong>Speed:</strong> {ship.speed} knots</p>
-                <p><strong>Heading:</strong> {ship.heading}°</p>
-                <p><strong>Destination:</strong> {ship.destination}</p>
-                <p><strong>Status:</strong> {ship.status}</p>
+          {ships.length > 0 ? (
+            ships.map(ship => (
+              <div 
+                key={ship.mmsi} 
+                className={`ship-item ${selectedShip?.mmsi === ship.mmsi ? 'selected' : ''}`}
+                onClick={() => setSelectedShip(ship)}
+              >
+                <h3>{ship.name}</h3>
+                <div className="ship-details">
+                  <p><strong>MMSI:</strong> {ship.mmsi}</p>
+                  <p><strong>Type:</strong> {ship.shipType}</p>
+                  <p><strong>Speed:</strong> {ship.speed} knots</p>
+                  <p><strong>Heading:</strong> {ship.heading}°</p>
+                  <p><strong>Destination:</strong> {ship.destination}</p>
+                  <p><strong>Status:</strong> {ship.status}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p>No ships found in the data file</p>
+          )}
           
           <div className="info-panel">
             <p>🚢 Click on ships in the panel or map to select them</p>
             <p>🗺️ Interactive map with real-time ship positions</p>
           </div>
         </div>
+      </div>
+      
+      {loading && (
+        <div className="loading-overlay">
+          <p>Loading maritime data...</p>
+        </div>
+      )}
+      
+      <div className="error-boundary">
+        {error && (
+          <div className="error-message">
+            <h3>Error:</h3>
+            <pre>{error.message}</pre>
+            <button onClick={() => window.location.reload()}>Reload</button>
+          </div>
+        )}
       </div>
     </div>
   );
